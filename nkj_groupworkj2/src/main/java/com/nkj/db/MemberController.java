@@ -7,13 +7,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.crypto.Data;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.ScriptCompilationException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.nkj.db.MemberModel;
 import com.nkj.db.MemberRepository;
@@ -31,32 +37,30 @@ public class MemberController {
 	MemberRepository userDAO;
 
 	@RequestMapping("/createMember")
-	public String create(HttpServletResponse response, @RequestParam String e, @RequestParam String p) throws IOException {
+	public RedirectView create(@RequestParam String data[], RedirectAttributes attributes) throws IOException {
 		memberModel = new MemberModel();
-		String email = e;
-		String password = p;
+		memberModel.setEmail(data[0]);
+		String email = data[0];
+		String password = data[1];
 
 		List<MemberModel> selectMember = userDAO.selectMember(memberModel);
 
-		if (!isValidEmail(email)) { // 檢查帳號是否為有效的電子郵件地址
-			if (!isValidPassword(password)) { // 檢查密碼是否符合密碼強度要求
-				response.sendRedirect("/login");
-			}
-			return "帳號或密碼格式不正確，請重新輸入";
-
-			// 返回錯誤訊息
-		}
-
-		else if (!(selectMember==null)) {
-			return "帳號已經存在，請使用其他帳號";
-
-		}
-
-		else {
+		if (selectMember.size() > 0) {
+			attributes.addAttribute("message", "帳號已存在");
+			return new RedirectView("signin");
+		} else if (!isValidPassword(password)) { // 檢查密碼是否符合密碼強度要求
+			attributes.addAttribute("message", "帳號或密碼格式不正確，請重新輸入");
+			return new RedirectView("signin");
+		} else if (!isValidEmail(email)) { // 檢查帳號是否為有效的電子郵件地址
+			attributes.addAttribute("message", "帳號或密碼格式不正確，請重新輸入");
+			return new RedirectView("signin");
+		} else {
 			memberModel.setEmail(email);
 			memberModel.setPassword(password);
 			userDAO.insert(memberModel);
-			return "已成功註冊帳號";// 重新登入
+//			redirectAttrs.addFlashAttribute("message", "已成功註冊帳號");
+			attributes.addAttribute("message", "已成功註冊帳號");
+			return new RedirectView("/");
 		}
 	}
 
@@ -64,6 +68,7 @@ public class MemberController {
 	public String sql(@RequestParam String[] email) {
 		memberModel = new MemberModel();
 		memberModel.setEmail(email[0]);
+
 		List<MemberModel> selectMember = userDAO.selectMember(memberModel);
 		if (selectMember.size() > 0) {
 			return "您的密碼是:" + selectMember.get(0).getPassword();// 成功
@@ -81,7 +86,6 @@ public class MemberController {
 		String checkPassword = null;
 //		PrintWriter out =response.getWriter();
 		MemberModel input = new MemberModel();
-
 		input.setEmail(email);
 
 		List<MemberModel> selectMember = userDAO.selectMember(input);
@@ -91,7 +95,6 @@ public class MemberController {
 			checkPassword = selectMember.get(0).getPassword();
 		}
 		System.out.println(selectMember);
-
 		System.out.println(password);
 		System.out.println(checkEmail);
 		System.out.println(checkPassword);
@@ -141,7 +144,11 @@ public class MemberController {
 	private boolean isValidEmail(String email) {
 		// 使用正則表達式檢查電子郵件地址是否合法
 		String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
-		return email.matches(regex);
+		if (!email.matches(regex)) {
+			// 密碼長度不符合要求
+			return false;
+		}
+		return true;
 	}
 
 	private boolean isValidPassword(String password) {

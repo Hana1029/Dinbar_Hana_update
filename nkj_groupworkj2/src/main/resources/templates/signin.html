@@ -11,13 +11,15 @@
 </head>
 
 <body>
+
+
 	<div class="container">
 		<div class="login-left">
 			<div class="login-header">
 				<h1>盯霸</h1>
 				<p>登入來使用</p>
 			</div>
-			<form class="login-form" action="/createMember" name="form">
+			<form class="login-form" action="/createMember" name="data">
 				<div class="login-form-content">
 					<div class="form-item">
 						<label for="email">請輸入信箱</label> <input type="text" id="email"
@@ -33,22 +35,17 @@
 								for="rememberMeCheckbox" class="checkboxLabel">記住我</label>
 						</div>
 					</div>
-				
+					<div>
+						<p th:text="${message}"></p>
+					</div>
+					<button name="data" type="submit" onclick="">註冊</button>
 				</div>
 			</form>
-				<button class="login-form" name="data" type="submit">註冊</button>
+
 		</div>
 		<div class="login-right">
 			<img class="img-fluid" src="./images/cat.png">
 		</div>
-		<script type="text/javascript">
-			e = document.getElementById("email")
-			p = document.getElementById("password")
-			fetch('/createMember?e=' + e.value + '&p=' + p.value).then(
-					function(response) {
-						alert(response)
-					})
-		</script>
 </body>
 
 </html>

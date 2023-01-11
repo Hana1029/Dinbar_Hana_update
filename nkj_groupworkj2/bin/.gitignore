@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+/.gitignore
+/.ignore
+/.mvn/
+/README.md
+/mvnw
+/mvnw.cmd
+/ngrok.exe
+/pom.xml
+/src/

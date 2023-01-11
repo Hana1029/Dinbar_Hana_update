@@ -2,7 +2,9 @@ package com.nkj.controller;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -23,10 +27,10 @@ public class PageController {
 
 	@RequestMapping("/")
 	public String index() {
-		
+
 		return "index.html";
 	}
-	
+
 	@RequestMapping("/login")
 	public String login() {
 		return "login.html";
@@ -36,12 +40,19 @@ public class PageController {
 	public String contact() {
 		return "contact.html";
 	}
-	
+
 	@RequestMapping("/signin")
-	public String signin() {
+	public String handle(Model model, @RequestParam("message") Optional<String> attr) {
+		if (attr.isEmpty())
+			model.addAttribute("message", "");
+
+		else {
+			model.addAttribute("message", attr.get());
+
+		}
 		return "signin.html";
 	}
-	
+
 	@RequestMapping("/select")
 	public String select() {
 		return "select.html";
@@ -58,12 +69,12 @@ public class PageController {
 //		model.addAttribute("name", title);
 //		return "index";
 //	}
-	
+
 //	@RequestMapping("/videoStream")
 //	public String videoStream() {
 //		return "videoStream.html";
 //	}
-	
+
 //	@RequestMapping("/pi")
 //	public String PiController() {
 //		return "PiController.html";

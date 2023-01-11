@@ -7,7 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="./css/login.css">
 <title>登入</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://apis.google.com/js/api.js"></script>
 <script src="js/google_api.js"></script>
 <script src="js/Facebook_api.js"></script>
@@ -40,9 +41,10 @@
 				</div>
 			</form>
 			<div class="login-form-footer">
-				<a href="#" id="google"> <img width="30" src="./images/google.png" alt="">Google登入
-				</a>
-				<a href="#" id="facebook"> <img width="30" src="./images/facebook.png" alt="">Facebook登入
+				<a href="#" id="google"> <img width="30"
+					src="./images/google.png" alt="">Google登入
+				</a> <a href="#" id="facebook"> <img width="30"
+					src="./images/facebook.png" alt="">Facebook登入
 				</a>
 			</div>
 
@@ -51,40 +53,61 @@
 		<div class="login-right">
 			<img class="img-fluid" src="./images/cat.png">
 		</div>
-<script>
-var google = document.getElementById('google');
-var facebook = document.getElementById('facebook');
-//google登入按鈕加入監聽click事件，觸發-登入-api_response->後端(email,password,sign)
-google.addEventListener('click',function(e){
-	//可用 fetch() 傳輸後端
-		authenticate().then(loadClient).then(function(){
-			fetch(
-					'/doApiLogin?email='+ email 
-					+'&password='+ password
-					+'&loginstatus='+ sign
-					)
-			    .then(function(response){
-			        console.log('google登入傳送後端成功',response)
-		        },
-				function(err){console.error("google登入傳送後端錯誤",err)}
-		)},function(err){console.error("google登入錯誤",err)})
-});
-//facebook登入按鈕加入監聽click事件，觸發-登入-api_response->後端(email,password,sign)
-facebook.addEventListener('click',function(e){
-    //可用 fetch() 傳輸後端
-        fblogin()
-		fetch(
-				'/doApiLogin?email='+ email 
-				+'&password='+ password
-				+'&loginstatus='+ sign
-				)
-		    .then(function(response){
-		        console.log('fb登入傳送後端成功',response)
-	            },
-			    function(err){console.error("fb登入傳送後端錯誤",err)}
-	    )        
-});
-</script>
+		<script>
+			var google = document.getElementById('google');
+			var facebook = document.getElementById('facebook');
+			//google登入按鈕加入監聽click事件，觸發-登入-api_response->後端(email,password,sign)
+			google
+					.addEventListener(
+							'click',
+							function(e) {
+								//可用 fetch() 傳輸後端
+								authenticate()
+										.then(loadClient)
+										.then(
+												function() {
+													fetch(
+															'/doApiLogin?email='
+																	+ email
+																	+ '&password='
+																	+ password
+																	+ '&loginstatus='
+																	+ sign)
+															.then(
+																	function(
+																			response) {
+																		console
+																				.log(
+																						'google登入傳送後端成功',
+																						response)
+																	},
+																	function(
+																			err) {
+																		console
+																				.error(
+																						"google登入傳送後端錯誤",
+																						err)
+																	})
+												},
+												function(err) {
+													console.error("google登入錯誤",
+															err)
+												})
+							});
+			//facebook登入按鈕加入監聽click事件，觸發-登入-api_response->後端(email,password,sign)
+			facebook.addEventListener('click', function(e) {
+				//可用 fetch() 傳輸後端
+				fblogin()
+				fetch(
+						'/doApiLogin?email=' + email + '&password=' + password
+								+ '&loginstatus=' + sign).then(
+						function(response) {
+							console.log('fb登入傳送後端成功', response)
+						}, function(err) {
+							console.error("fb登入傳送後端錯誤", err)
+						})
+			});
+		</script>
 </body>
 
 </html>
